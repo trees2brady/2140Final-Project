@@ -28,8 +28,28 @@ class QueryRetrieval:
         finally:
             searcher.close()
         return search_results
+    
+    def search(self,query, topN):
+        return_res = []
+        myindex = index.open_dir(self.path_dir)
+        with myindex.searcher() as self_seacher:
+            query_parser = QueryParser("breif_summary", myindex.schema)
+            query_input = query_parser.parse(query)
+            res = self_seacher.search(query_input,limit=topN)
+            # print(res[0]["official_title"])
+            for i in range(topN):
+                a = res[i]
+                dict_a = dict(a)
+                temp_dict = {}
+                temp_dict["title"] = dict_a["official_title"]
+                temp_dict["docID"] = dict_a["nct_id"]
+                temp_dict["highlight"] = dict_a["breif_summary"].split(" ")
+                temp_dict["content"] = dict_a["detailed_description"]
+                return_res.append(temp_dict)
+
+        return return_res
+
+
 if __name__ == "__main__":
     s = QueryRetrieval()
-    x = s.adv_query("impact OR trial OR pain OR patient", 20)
-
-    print("*********")
+    x = s.search("impact", 20)
