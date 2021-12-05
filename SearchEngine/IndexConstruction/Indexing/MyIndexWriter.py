@@ -2,7 +2,7 @@ import SearchEngine.Classes.Path as Path
 from whoosh import index
 from whoosh.fields import Schema, TEXT, KEYWORD, ID, STORED
 from whoosh.analysis import RegexTokenizer
-
+import os
 
 class MyIndexWriter:
 
@@ -17,8 +17,11 @@ class MyIndexWriter:
                         criteia=TEXT(analyzer=RegexTokenizer(), stored=True),
                         detailed_description=TEXT(analyzer=RegexTokenizer(), stored=True))
         indexing = index.create_in(path_dir, schema)
+
+        if not os.path.exists("indexdir"):
+            os.mkdir("indexdir")
+
         self.writer = indexing.writer()
-        return
 
     def index(self, fields_dict):
         self.writer.add_document(nct_id=fields_dict["nct_id"],
