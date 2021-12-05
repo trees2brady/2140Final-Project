@@ -1,6 +1,9 @@
-import SearchEngine.Classes.Path as Path
-import re
+import sys
 import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+print(sys.path)
+import Classes.Path as Path
+import re
 
 
 class PreprocessedCorpusReader:
@@ -73,3 +76,6 @@ class PreprocessedCorpusReader:
             for i in all_xml_files:
                 fp.write(i + "\n")
 
+if __name__ == "__main__":
+    preprocessor = PreprocessedCorpusReader()
+    preprocessor.create_path_file(Path.XMLPath)
