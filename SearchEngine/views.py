@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from SearchEngine.Searching.QueryRetreival import QueryRetrieval
+import json
 
 query_retrieval = QueryRetrieval()
 
