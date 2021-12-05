@@ -52,9 +52,12 @@ class PreprocessedCorpusReader:
     def get_all_files_from_part(self, part_path):
         text_list = []
         for file in os.listdir(part_path):
-            xml_list = os.listdir(part_path + "\\" + file)
+            # pass hidden files
+            if file[0] == ".": 
+                continue
+            xml_list = os.listdir(os.path.join(part_path, file))
             for xml_file in xml_list:
-                text_list.append(part_path + "\\" + file + "\\" + xml_file)
+                text_list.append(os.path.join(part_path, file, xml_file))
         return text_list
 
     def create_path_file(self, write_filename):  # need to write in the filepath of raw material manually
