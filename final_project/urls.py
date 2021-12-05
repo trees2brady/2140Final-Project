@@ -18,8 +18,8 @@ from django.urls import path
 from SearchEngine import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('adv_search/', views.adv_search),
-    path('index/', views.index),
-    path('search/<str:query>/', views.adv_search, name='search'),
-    path("getdoc/<str:nct_id>/", views.getdoc, name="getdoc"),
+    # path('adv_search/', views.adv_search),
+    # path('index/', views.index),
+    path('search/', views.search, name='search'),
+    path("getdoc/", views.getdoc, name="getdoc"),
 ]
