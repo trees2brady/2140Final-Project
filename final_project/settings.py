@@ -39,20 +39,58 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'SearchEngine',
+"corsheaders",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+"corsheaders.middleware.CorsMiddleware",
 ]
+CSRF_COOKIE_SECURE = False
 
 ROOT_URLCONF = 'final_project.urls'
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ORIGIN_WHITELIST = [
+    # '*',
+    "http://localhost:8000"
+]
+
+
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+    'VIEW',
+)
+
+CORS_ALLOW_HEADERS = (
+    '*',
+    'dnt',
+    'source',
+    'origin',
+    'Pragma',
+    'accept',
+    'user-agent',
+    'x-csrftoken',
+    'X_FILENAME',
+    'content-type',
+    'authorization',
+    'authentication',
+    'XMLHttpRequest',
+    'accept-encoding',
+    "x-requested-with",
+)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
