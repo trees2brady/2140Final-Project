@@ -31,6 +31,26 @@ def adv_search(request):
     query_retrieval.adv_query(search_string, 30)
     return render(request, "adv_search.html")
 
+
+
+@csrf_exempt
+def search(request):
+    # indexReader
+    print("request.body",request.body)
+    body_unicode = request.body
+    body = json.loads(body_unicode)
+    searchItem = body['searchItem']
+
+    query = searchItem
+   
+    return_res = {}
+    res = query_retrieval.search(query, 30)
+
+    return_res["success"] = True
+    return_res["docs"] = res
+    print(res)
+    return JsonResponse(return_res)
+
 @csrf_exempt
 def getdoc(request):
     query = request.POST.get("docid")
