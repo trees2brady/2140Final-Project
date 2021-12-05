@@ -1,4 +1,7 @@
-from SearchEngine.Classes import Path
+import sys, os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from Classes import Path
 import whoosh.index as index
 from whoosh.qparser import QueryParser
 from whoosh import scoring
