@@ -31,7 +31,9 @@ while document is not None:
         else:
             result[field] = ""
     index_writer.index(result)
-    print(cnt)
+    if cnt % 10000 == 0:
+        print(cnt)
     cnt += 1
     document = preprocessor.nextDocument()
+print(cnt)
 index_writer.close()
