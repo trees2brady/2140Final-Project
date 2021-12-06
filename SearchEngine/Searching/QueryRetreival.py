@@ -92,10 +92,19 @@ class QueryRetrieval:
         with myindex.searcher(weighting=scoring.BM25F(B=0.75, content_B=1.0, K1=1.5)) as self_seacher:
             query_parser = QueryParser("breif_summary", myindex.schema)
             query_input = query_parser.parse(query)
-            result = self_seacher.search(query_input,limit=topN)
-            # print(res[0]["official_title"])
-            for res in result:
-                res = dict(res)
+            results = self_seacher.search(query_input,limit=topN)
+            
+            """
+            Optional way to generate highlights
+            """
+            # # Allow larger fragments
+            # results.fragmenter.maxchars = 50
+            
+            # # Show more context before and after
+            # results.fragmenter.surround = 10
+
+            for res in results:
+                # print(res.highlights("breif_summary"))
                 docId = res["nct_id"]
                 res = self.read_original_file(docId)
                 print(res)
