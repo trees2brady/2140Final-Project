@@ -4,17 +4,19 @@ from Indexing.WordTokenizer import WordTokenizer
 from Indexing.WordNormalizer import WordNormalizer
 from Indexing.MyIndexWriter import MyIndexWriter
 
-
+# init all
 preprocessor = PreprocessedCorpusReader()
-document = preprocessor.nextDocument()
 stop_word_remover = StopWordRemover()
 word_normalizer = WordNormalizer()
 index_writer = MyIndexWriter()
+
+# count for docs
 cnt = 0
 
+document = preprocessor.nextDocument()
 while document is not None:
     fields_list = ["official_title", "breif_summary", "criteia", "detailed_description"]
-    result = {"nct_id": document["nct_id"][8:-9]}
+    result = {"nct_id": document["nct_id"]}
     for field in fields_list:
         if document.get(field):
             word_tokenizer = WordTokenizer(document[field])

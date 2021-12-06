@@ -9,17 +9,19 @@ class MyIndexWriter:
     writer = []
 
     def __init__(self):
-        path_dir = Path.IndexTextDir
-
         schema = Schema(nct_id=ID(stored=True),
                         official_title=TEXT(analyzer=RegexTokenizer(), stored=True),
                         breif_summary=TEXT(analyzer=RegexTokenizer(), stored=True),
                         criteia=TEXT(analyzer=RegexTokenizer(), stored=True),
                         detailed_description=TEXT(analyzer=RegexTokenizer(), stored=True))
-        indexing = index.create_in(path_dir, schema)
 
-        if not os.path.exists("indexdir"):
-            os.mkdir("indexdir")
+        if not os.path.exists(Path.IndexTextDir):
+            os.mkdir(Path.IndexTextDir)
+
+        if not os.path.exists(Path.OriginalFilePath):
+            os.mkdir(Path.OriginalFilePath)
+
+        indexing = index.create_in(Path.IndexTextDir, schema)
 
         self.writer = indexing.writer()
 

@@ -12,6 +12,8 @@ StopwordDir = os.path.join(BASE_DIR, "SearchEngine", "IndexConstruction", "data"
 
 XMLPath = os.path.join(BASE_DIR, "SearchEngine", "IndexConstruction", "data", "xml_path.txt")
 
+OriginalFilePath = os.path.join(BASE_DIR, "SearchEngine", "IndexConstruction", "data", "original")
+
 print(IndexTextDir)
 print(StopwordDir)
 print(XMLPath)
