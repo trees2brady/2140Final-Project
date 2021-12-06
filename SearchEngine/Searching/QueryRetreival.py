@@ -33,23 +33,38 @@ class QueryRetrieval:
             searcher.close()
         return search_results
 
-    def read_original_file(self, docId):
-        with open(os.path.join(self.original_dir, docId + ".txt"), "r", encoding='utf8') as f:
-            line = f.readline().strip()
-        res = eval(line)    # `res` is a dict
+    def read_original_file(self, docId, summary=True):
+        """
+            :param summary: used for getdoc API
+        """
+        try:
+            print(docId)
+            with open(os.path.join(self.original_dir, docId + ".txt"), "r", encoding='utf8') as f:
+                line = f.readline().strip()
+            res = eval(line)    # `res` is a dict
+            # check if all keys are in dict
+            if "detailed_description" not in res:
+                res["detailed_description"] = ""
+                description = res["breif_summary"][:255]
+            else:
+                description = res["detailed_description"][:255]
 
-        # check if all keys are in dict
-        if "detailed_description" not in res:
-            res["detailed_description"] = ""
-            highlight = res["breif_summary"].split(" ")[:99]
-        else:
-            highlight = res["detailed_description"].split(" ")[:99]
-        # set highlight keywords
-        highlight.append("...")
-        res["highlight"] = highlight
-        
-        if "criteia" not in res:
-            res["criteia"] = ""
+            if "criteia" not in res:
+                res["criteia"] = ""
+            print(description)
+            # set highlight keywords
+            description += " ..."
+
+            if summary:
+                res["description"] = description
+            else:
+                res = {"title": res["official_title"], "contents": res["breif_summary"].split("\n") + res["detailed_description"].split("\n")}
+        except Exception as e:
+            print(e)
+            if summary:
+                res = {"title": "", "docId": "", "highlight": "", "description": ""}
+            else:
+                res = {"title": "", "contents": "No such file."}
 
         return res
     
@@ -64,9 +79,14 @@ class QueryRetrieval:
             for res in result:
                 res = dict(res)
                 docId = res["nct_id"]
-                res_dict = self.read_original_file(docId)
+                res = self.read_original_file(docId)
+                print(res)
+                res_dict = {}
+                res_dict["title"] = res["official_title"]
+                res_dict["docID"] = res["nct_id"]
+                res_dict["highlight"] = res["description"].split(" ")[:2]
+                res_dict["description"] = res["description"].replace("\n", " ")
                 return_res.append(res_dict)
-
         return return_res
 
 
