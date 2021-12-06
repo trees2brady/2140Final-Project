@@ -1,6 +1,9 @@
-import SearchEngine.Classes.Path as Path
-import re
+import sys
 import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+print(sys.path)
+import Classes.Path as Path
+import re
 
 
 class PreprocessedCorpusReader:
@@ -21,6 +24,8 @@ class PreprocessedCorpusReader:
         file_line = self.corpus.readline().strip("\n")
         if file_line is not None and len(file_line) != 0:
             record = self.get_xml_element_re(str(file_line), self.search_compiler)
+            # save original files
+            self.write_original_file(record)
             if record is not None and len(record) != 0:
                 return record
         return None
@@ -29,7 +34,7 @@ class PreprocessedCorpusReader:
         content = ""
         with open(file, "r", encoding="utf-8") as f:
             for line in f:
-                content += line
+                content += line.strip()
         nct_id = re.findall(search_compiler["nct_id"], content)
         official_title = re.findall(search_compiler["official_title"], content)
         breif_summary = re.findall(search_compiler["breif_summary"], content)  # 要提取text
@@ -37,24 +42,39 @@ class PreprocessedCorpusReader:
         detailed_description = re.findall(search_compiler["detailed_description"], content)
         result = {}
         if nct_id is not None and nct_id != []:
-            result["nct_id"] = nct_id[0]
+            result["nct_id"] = nct_id[0][8:-9]
         if official_title is not None and official_title != []:
-            result["official_title"] = official_title[0]
+            result["official_title"] = official_title[0].replace("<official_title>", "").replace("</official_title>", "")
         if breif_summary is not None and breif_summary != []:
-            result["breif_summary"] = breif_summary[0].replace("<textblock>\n", "").replace("</textblock>\n", "")
+            result["breif_summary"] = breif_summary[0].replace("<brief_summary><textblock>", "").replace("</textblock></brief_summary>", "").replace("&#xD;", "\n")
         if criteia is not None and criteia != []:
-            result["criteia"] = criteia[0].replace("<textblock>\n", "").replace("</textblock>\n", "")
+            result["criteia"] = criteia[0].replace("<criteria><textblock>", "").replace("</textblock></criteria>", "").replace("&#xD;", "\n")
         if detailed_description is not None and detailed_description != []:
-            result["detailed_description"] = detailed_description[0].replace("<textblock>\n", "").replace(
-                "</textblock>\n", "")
+            result["detailed_description"] = detailed_description[0].replace("<detailed_description><textblock>", "").replace(
+                "</textblock></detailed_description>", "").replace("&#xD;", "\n")
         return result
+
+    def write_original_file(self, record):
+        """
+            Write useful parts of raw data to generate original files for searching
+        """
+        try:
+            with open(os.path.join(Path.OriginalFilePath, record["nct_id"] + ".txt"), "w", encoding='utf8') as f:
+                f.write(str(record))
+        except Exception as e:
+            print(e)
+            return False
+        return True
 
     def get_all_files_from_part(self, part_path):
         text_list = []
         for file in os.listdir(part_path):
-            xml_list = os.listdir(part_path + "\\" + file)
+            # pass hidden files
+            if file[0] == ".": 
+                continue
+            xml_list = os.listdir(os.path.join(part_path, file))
             for xml_file in xml_list:
-                text_list.append(part_path + "\\" + file + "\\" + xml_file)
+                text_list.append(os.path.join(part_path, file, xml_file))
         return text_list
 
     def create_path_file(self, write_filename):  # need to write in the filepath of raw material manually
@@ -70,3 +90,6 @@ class PreprocessedCorpusReader:
             for i in all_xml_files:
                 fp.write(i + "\n")
 
+if __name__ == "__main__":
+    preprocessor = PreprocessedCorpusReader()
+    preprocessor.create_path_file(Path.XMLPath)

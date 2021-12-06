@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from SearchEngine.Searching.QueryRetreival import QueryRetrieval
+import json
 
 query_retrieval = QueryRetrieval()
 
@@ -53,18 +54,21 @@ def search(request):
 
 @csrf_exempt
 def getdoc(request):
-    query = request.POST.get("docid")
+    docId = json.loads(request.body)["docid"]
+    
+    res = query_retrieval.read_original_file(docId, summary = False)
+    print(res)
     # TODO return value
     # If true
-    doc = {"title": "emergency room",
-           "contents": ["A 31-year-old woman with no previous medical problems comes \
-                        to the emergency room with a history of 2 weeks of joint pain \
-                        and fatigue.",
-                        "called if the Promise is rejected. This function has one argument, \
-                        the rejection reason. If it is not a function, it is internally replaced with a \
-                          function (it throws an error it received as argument)"
-                        ]
-           }
-    return JsonResponse(doc)
+    # doc = {"title": "emergency room",
+    #        "contents": ["A 31-year-old woman with no previous medical problems comes \
+    #                     to the emergency room with a history of 2 weeks of joint pain \
+    #                     and fatigue.",
+    #                     "called if the Promise is rejected. This function has one argument, \
+    #                     the rejection reason. If it is not a function, it is internally replaced with a \
+    #                       function (it throws an error it received as argument)"
+    #                     ]
+    #        }
+    return JsonResponse(res)
 
 
